@@ -56,4 +56,26 @@ class MovableImageView(ctx:Context,var bitmap:Bitmap):View(ctx) {
             }
         }
     }
+    data class MovableImage(var bitmap:Bitmap) {
+        val state = MovableImageState()
+        fun draw(canvas:Canvas, paint:Paint) {
+            val w = bitmap.width.toFloat()
+            val h = bitmap.height.toFloat()
+            canvas.save()
+            val path = Path()
+            path.addRoundRect(RectF(0f,0f,w,h),Math.max(w,h)/5,Math.max(w,h)/5,Path.Direction.CW)
+            canvas.save()
+            canvas.translate(w/2, h/2)
+            canvas.scale(1f + 0.5f * state.scale, 1f + 0.5f * state.scale)
+            canvas.drawBitmap(bitmap, -w/2, -h/2, paint)
+            canvas.restore()
+            canvas.restore()
+        }
+        fun update(stopcb: (Float) -> Unit) {
+            state.update(stopcb)
+        }
+        fun startUpdating(startcb: () -> Unit) {
+            state.startUpdating(startcb)
+        }
+    }
 }
