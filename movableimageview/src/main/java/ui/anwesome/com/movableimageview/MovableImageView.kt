@@ -3,6 +3,7 @@ package ui.anwesome.com.movableimageview
 /**
  * Created by anweshmishra on 13/02/18.
  */
+import android.app.Activity
 import android.content.*
 import android.graphics.*
 import android.view.*
@@ -107,6 +108,13 @@ class MovableImageView(ctx:Context,var bitmap:Bitmap):View(ctx) {
             movableImage?.startUpdating {
                 animator.start()
             }
+        }
+    }
+    companion object {
+        fun create(activity: Activity, bitmap: Bitmap):MovableImageView {
+            val view = MovableImageView(activity,bitmap)
+            activity.setContentView(view)
+            return view
         }
     }
 }
