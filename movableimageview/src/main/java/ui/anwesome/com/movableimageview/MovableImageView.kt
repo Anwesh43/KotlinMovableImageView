@@ -55,6 +55,11 @@ class MovableImageView(ctx:Context,var bitmap:Bitmap):View(ctx) {
                 view.postInvalidate()
             }
         }
+        fun stop() {
+            if(animated) {
+                animated = false
+            }
+        }
     }
     data class MovableImage(var bitmap:Bitmap) {
         val state = MovableImageState()
@@ -76,6 +81,31 @@ class MovableImageView(ctx:Context,var bitmap:Bitmap):View(ctx) {
         }
         fun startUpdating(startcb: () -> Unit) {
             state.startUpdating(startcb)
+        }
+    }
+    data class Renderer(var view: MovableImageView, var time:Int = 0) {
+        var movableImage:MovableImage ?= null
+        val animator = Animator(view)
+        fun render(canvas:Canvas, paint:Paint) {
+            if(time == 0) {
+                val w = canvas.width
+                val h = canvas.height
+                var bitmap = Bitmap.createScaledBitmap(view.bitmap, w, w, true)
+                movableImage = MovableImage(bitmap)
+            }
+            canvas.drawColor(Color.parseColor("#212121"))
+            movableImage?.draw(canvas,paint)
+            time++
+            animator.animate {
+                movableImage?.update {
+                    animator.stop()
+                }
+            }
+        }
+        fun handleTap () {
+            movableImage?.startUpdating {
+                animator.start()
+            }
         }
     }
 }
